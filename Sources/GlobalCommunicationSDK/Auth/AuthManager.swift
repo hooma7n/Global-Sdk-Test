@@ -15,16 +15,15 @@ public final class AuthManager {
     }
 
     public func login(email: String, password: String) async throws -> LoginResponse {
-        let res: LoginResponse = try await api.request(API.login(email: email, password: password))
+        let res: APIClient.LoginResponse = try await api.login(email: email, password: password)
         tokenStore.accessToken = res.accessToken
         tokenStore.refreshToken = res.refreshToken
-        return res
+        return .init(accessToken: res.accessToken, refreshToken: res.refreshToken)
     }
 
     public func refresh() async throws {
         guard let rt = tokenStore.refreshToken else { return }
-        struct RefreshRes: Decodable { let accessToken: String }
-        let res: RefreshRes = try await api.request(API.refresh(token: rt))
-        tokenStore.accessToken = res.accessToken
+        let newAccessToken = try await api.refresh(using: rt)
+        tokenStore.accessToken = newAccessToken
     }
 }
