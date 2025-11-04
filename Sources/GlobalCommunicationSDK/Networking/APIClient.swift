@@ -7,13 +7,6 @@ enum APIClientError: Error {
     case decoding
 }
 
-// MARK: - DTOs
-struct DeviceChallengeResponse: Decodable {
-    let challengeId: String
-    let challenge: String
-    let expiresAt: Int64
-}
-
 // MARK: - APIClient
 public final class APIClient {
     public static let shared = APIClient()
