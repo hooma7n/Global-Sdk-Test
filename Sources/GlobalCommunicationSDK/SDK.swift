@@ -16,14 +16,17 @@ public final class GlobalCommunicationSDK {
 
     public func configure(_ config: SDKConfiguration, tokenStore: TokenStore = InMemoryTokenStore()) {
 
+        if state == .configured {
+            Logger.warn("SDK already configured; skipping reconfiguration.")
+            return
+        }
+
         SDKConfiguration.configure(config)
         self.config = config
         self.api = APIClient.shared
         self.auth = AuthManager(api: api, tokenStore: tokenStore)
 
-        Task {
-            await AppAttestManager.shared.ensureAttestationIfNeeded()
-        }
+        Task { await AppAttestManager.shared.ensureAttestationIfNeeded() }
 
         state = .configured
         Logger.info("SDK configured: \(config.environment.rawValue)")

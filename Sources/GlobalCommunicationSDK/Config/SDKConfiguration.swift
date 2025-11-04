@@ -48,8 +48,6 @@ public struct SDKConfiguration: Codable {
 
     public static func configure(_ config: SDKConfiguration) {
         self.current = config
-        Logger.info("SDK configured: \(config.environment.rawValue)")
-        Task { await AppAttestManager.shared.ensureAttestationIfNeeded() }
     }
 
     public static func reset() { self.current = nil }
