@@ -38,10 +38,22 @@ public struct SDKConfiguration: Codable {
         self.environment = environment
         self.tenantId = tenantId
         self.publicSdkKey = publicSdkKey
-        self.bundleId = bundleId ?? (Bundle.main.bundleIdentifier ?? "unknown.bundle.id")
+        self.bundleId = bundleId ?? SDKConfiguration.resolveHostBundleID()
         self.licenseKey = licenseKey
         self.customBaseURL = customBaseURL
     }
+
+    // MARK: - Resolve bundle id robustly
+    private static func resolveHostBundleID() -> String {
+        if let id = Bundle.main.bundleIdentifier {
+            return id
+        }
+        if let id = Bundle(for: SDKConfigurationDummy.self).bundleIdentifier {
+            return id
+        }
+        return "unknown.bundle.id"
+    }
+    private class SDKConfigurationDummy {}
 
     // MARK: - Shared config
     public static private(set) var current: SDKConfiguration?
